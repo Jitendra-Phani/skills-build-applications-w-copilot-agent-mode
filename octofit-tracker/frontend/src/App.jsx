@@ -2,6 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
+import { API_BASE_URL } from './api'
 import './App.css'
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <p>
             Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
           </p>
+          <p className="api-url">API: <code>{API_BASE_URL}</code></p>
         </div>
         <button
           type="button"
