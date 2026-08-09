@@ -1,34 +1,34 @@
 import { Router } from 'express';
+import User from '../models/User';
 
 const router = Router();
 
-const users = [
-  { id: '1', name: 'Ava Martinez', email: 'ava@octofit.com', teamId: '1' },
-  { id: '2', name: 'Noah Patel', email: 'noah@octofit.com', teamId: '1' },
-  { id: '3', name: 'Mia Chen', email: 'mia@octofit.com', teamId: '2' }
-];
-
-router.get('/', (req, res) => {
-  res.json(users);
+router.get('/', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Unable to fetch users', error });
+  }
 });
 
-router.get('/:id', (req, res) => {
-  const user = users.find((item) => item.id === req.params.id);
-  if (!user) return res.status(404).json({ message: 'User not found' });
-  res.json(user);
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Unable to fetch user', error });
+  }
 });
 
-router.post('/', (req, res) => {
-  const { name, email, teamId } = req.body;
-  const newUser = {
-    id: String(users.length + 1),
-    name: name || 'Unnamed User',
-    email: email || 'user@octofit.com',
-    teamId: teamId || null
-  };
-
-  users.push(newUser);
-  res.status(201).json(newUser);
+router.post('/', async (req, res) => {
+  try {
+    const newUser = await User.create(req.body);
+    res.status(201).json(newUser);
+  } catch (error) {
+    res.status(500).json({ message: 'Unable to create user', error });
+  }
 });
 
 export default router;

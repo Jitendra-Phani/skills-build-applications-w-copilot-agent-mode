@@ -1,32 +1,34 @@
 import { Router } from 'express';
+import Team from '../models/Team';
 
 const router = Router();
 
-const teams = [
-  { id: '1', name: 'Morning Marathoners', coach: 'Leo Adams' },
-  { id: '2', name: 'Sunset Sprinters', coach: 'Eva Kim' }
-];
-
-router.get('/', (req, res) => {
-  res.json(teams);
+router.get('/', async (req, res) => {
+  try {
+    const teams = await Team.find();
+    res.json(teams);
+  } catch (error) {
+    res.status(500).json({ message: 'Unable to fetch teams', error });
+  }
 });
 
-router.get('/:id', (req, res) => {
-  const team = teams.find((item) => item.id === req.params.id);
-  if (!team) return res.status(404).json({ message: 'Team not found' });
-  res.json(team);
+router.get('/:id', async (req, res) => {
+  try {
+    const team = await Team.findById(req.params.id);
+    if (!team) return res.status(404).json({ message: 'Team not found' });
+    res.json(team);
+  } catch (error) {
+    res.status(500).json({ message: 'Unable to fetch team', error });
+  }
 });
 
-router.post('/', (req, res) => {
-  const { name, coach } = req.body;
-  const newTeam = {
-    id: String(teams.length + 1),
-    name: name || `Team ${teams.length + 1}`,
-    coach: coach || 'TBD'
-  };
-
-  teams.push(newTeam);
-  res.status(201).json(newTeam);
+router.post('/', async (req, res) => {
+  try {
+    const newTeam = await Team.create(req.body);
+    res.status(201).json(newTeam);
+  } catch (error) {
+    res.status(500).json({ message: 'Unable to create team', error });
+  }
 });
 
 export default router;

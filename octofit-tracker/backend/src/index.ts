@@ -6,13 +6,22 @@ import teamsRouter from './routes/teams';
 import activitiesRouter from './routes/activities';
 import leaderboardRouter from './routes/leaderboard';
 import workoutsRouter from './routes/workouts';
+import { CODESPACE_NAME, CODESPACE_URL } from './server';
 
 const app = express();
 const port = process.env.PORT || 8000;
+const codespaceName = process.env.CODESPACE_NAME || CODESPACE_NAME || '';
+const apiHost = codespaceName
+  ? `https://${codespaceName}${CODESPACE_URL}`
+  : `http://localhost:${port}`;
+const apiBaseUrl = `${apiHost}/api`;
 
 app.use(express.json());
 
 connectDB();
+
+console.log(`Server listening on port ${port}`);
+console.log(`API base URL: ${apiBaseUrl}`);
 
 app.get('/', (req, res) => {
   res.json({ message: 'OctoFit Tracker backend is running' });
